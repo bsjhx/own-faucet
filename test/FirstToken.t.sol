@@ -1,20 +1,43 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
+import "forge-std/console.sol";
+
 import {FirstToken} from "../src/FirstToken.sol";
 
-contract CounterTest is Test {
-    FirstToken public fdemo;
+contract FirstTokenTest is Test {
+    uint constant ONE_TOKEN = (1 * 10) ^ 18;
+    address constant ALICE = address(1);
+
+    FirstToken public firstToken;
 
     function setUp() public {
-        fdemo = new FirstToken();
+        firstToken = new FirstToken();
     }
 
-    function testMint() public { 
-        // string memory dummyTokenUri = "ipfs://metadata_url";
-        // uint256 tokenId = fdemo.mint(dummyTokenUri);
+    function test_mint() public {
+        // given
+        uint totalSupplyBefore = firstToken.totalSupply();
+        uint aliceBalanceBefore = firstToken.balanceOf(ALICE);
 
-        // assertEq(dummyTokenUri, fdemo.tokenURI(tokenId));
+        // when
+        firstToken.mint(ALICE, ONE_TOKEN);
+
+        // then
+        uint totalSupplyAfter = firstToken.totalSupply();
+        assertEq(totalSupplyAfter - totalSupplyBefore, ONE_TOKEN);
+
+        uint aliceBalanceAfter = firstToken.balanceOf(ALICE);
+        assertEq(aliceBalanceAfter - aliceBalanceBefore, ONE_TOKEN);
+    }
+
+    function testRevert_mintCalledByNotMinter() public {
+        address nonMinterAddress = address(0);
+
+        vm.prank(nonMinterAddress);
+        vm.expectRevert();
+
+        firstToken.mint(ALICE, ONE_TOKEN);
     }
 }
