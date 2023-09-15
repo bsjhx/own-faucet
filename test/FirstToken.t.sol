@@ -7,8 +7,10 @@ import "forge-std/console.sol";
 import {FirstToken} from "../src/FirstToken.sol";
 
 contract FirstTokenTest is Test {
-    uint constant ONE_TOKEN = (1 * 10) ^ 18;
+    uint constant ONE_TOKEN = 1 * (10 ^ 18);
     address constant ALICE = address(1);
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
 
     FirstToken public firstToken;
 
@@ -22,6 +24,9 @@ contract FirstTokenTest is Test {
         uint aliceBalanceBefore = firstToken.balanceOf(ALICE);
 
         // when
+        vm.expectEmit();
+        emit Transfer(address(0), ALICE, ONE_TOKEN);
+        
         firstToken.mint(ALICE, ONE_TOKEN);
 
         // then
