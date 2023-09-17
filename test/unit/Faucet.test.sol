@@ -6,11 +6,11 @@ import "openzeppelin/token/ERC20/ERC20.sol";
 import {Faucet} from "../../src/Faucet.sol";
 import {FirstToken} from "../../src/FirstToken.sol";
 
-import {UnitTestConfiguration} from "./UnitTestConfiguration.sol";
+import {TestUtils} from "../TestUtils.sol";
 
 import "forge-std/console.sol";
 
-contract FaucetTest is UnitTestConfiguration {
+contract FaucetTest is TestUtils {
     Faucet private faucet;
 
     function setUp() public {
@@ -57,6 +57,5 @@ contract FaucetTest is UnitTestConfiguration {
 
         // 2 tokens are requested
         faucet.requestTokens(2 * ONE_TOKEN);
-
     }
 }
