@@ -8,6 +8,8 @@ import "./FirstToken.sol";
 import "forge-std/console.sol";
 
 contract Faucet is AccessControl {
+    event TokenRequested(address account, uint amount);
+
     FirstToken private token;
 
     constructor(address _tokenAddress) {
@@ -15,16 +17,16 @@ contract Faucet is AccessControl {
         token = FirstToken(_tokenAddress);
     }
 
-    function requestTokens(uint _amount) external {
-        console.log(address(this));
+    function requestTokens(uint _amount) external returns (bool) {
         require(
             token.balanceOf(address(this)) > _amount,
             "Insufficient faucet balance"
         );
 
-        console.log("111");
+        bool result = token.transfer(msg.sender, _amount);
 
-        token.transfer(msg.sender, _amount);
-        console.log("222");
+        emit TokenRequested(msg.sender, _amount);
+
+        return result;
     }
 }
