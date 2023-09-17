@@ -42,4 +42,21 @@ contract FaucetTest is UnitTestConfiguration {
 
         assertTrue(faucet.requestTokens(ONE_TOKEN));
     }
+
+    function testRevert_faucetBalanceIsInsufficient() public {
+        // given
+        // mock faucet balance (ONE_TOKEN)
+        vm.mockCall(
+            MOCKED_TOKEN_ADDRESS,
+            abi.encodeWithSelector(ERC20.balanceOf.selector, address(faucet)),
+            abi.encode(ONE_TOKEN)
+        );
+
+        // revert is expected when
+        vm.expectRevert(bytes(abi.encodePacked("Insufficient faucet balance")));
+
+        // 2 tokens are requested
+        faucet.requestTokens(2 * ONE_TOKEN);
+
+    }
 }
