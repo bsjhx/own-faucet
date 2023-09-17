@@ -10,11 +10,12 @@ import {FirstToken} from "../src/FirstToken.sol";
 
 import "forge-std/console.sol";
 
+import {TestsConstants} from "./TestsConstants.sol";
+
 contract FaucetTest is Test {
 
-    uint constant ONE_TOKEN = 1 * (10 ^ 18);
-    
-    address constant ALICE = address(1);
+    event TokenRequested(address account, uint amount);
+
     address constant MOCKED_TOKEN_ADDRESS = address(1000);
 
     Faucet private faucet;
@@ -27,24 +28,24 @@ contract FaucetTest is Test {
       // given
 
       // mock faucet balance
-      console.log(address(faucet));
       vm.mockCall(
         MOCKED_TOKEN_ADDRESS,
         abi.encodeWithSelector(ERC20.balanceOf.selector, address(faucet)),
-        abi.encode(10 * ONE_TOKEN)
+        abi.encode(10 * TestsConstants.ONE_TOKEN)
       );
 
       vm.mockCall(
         MOCKED_TOKEN_ADDRESS,
-        abi.encodeWithSelector(ERC20.transfer.selector, ALICE, ONE_TOKEN),
+        abi.encodeWithSelector(ERC20.transfer.selector, TestsConstants.ALICE, TestsConstants.ONE_TOKEN),
         abi.encode(true)
       );
     
-      // when
-      vm.prank(ALICE);
-      faucet.requestTokens(ONE_TOKEN);
-       
-      // then
+      // when Alice requests for one token
+      vm.prank(TestsConstants.ALICE);
 
+      vm.expectEmit();
+      emit TokenRequested(TestsConstants.ALICE, TestsConstants.ONE_TOKEN);
+
+      assertTrue(faucet.requestTokens(TestsConstants.ONE_TOKEN));
     }
 }
