@@ -7,6 +7,9 @@ env:
 
 jobs:
   check:
+    defaults:
+      run:
+        working-directory: ./contracts
     strategy:
       fail-fast: true
 
