@@ -9,9 +9,6 @@ contract DeployTokenScript is Script {
     function setUp() public {}
 
     function run() public {
-        console2.log("Weszlo.pl");
-        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-
         vm.startBroadcast();
 
         //deploying token
