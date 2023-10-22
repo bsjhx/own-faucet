@@ -12,9 +12,14 @@ contract Faucet is AccessControl {
 
     FirstToken private token;
 
-    constructor(address _tokenAddress) {
+    mapping(address => uint256) private lastRequestedTimes;
+
+    uint256 private timeBetweenRequests;
+
+    constructor(address _tokenAddress, uint256 _timeBetweenRequests) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         token = FirstToken(_tokenAddress);
+        timeBetweenRequests = _timeBetweenRequests;
     }
 
     function requestTokens(uint _amount) external returns (bool) {
@@ -22,8 +27,13 @@ contract Faucet is AccessControl {
             token.balanceOf(address(this)) > _amount,
             "Insufficient faucet balance"
         );
+        require(
+            block.timestamp >= lastRequestedTimes[msg.sender] + timeBetweenRequests,
+            "Required time must pass before requesting token is allowed."
+        );
 
         bool result = token.transfer(msg.sender, _amount);
+        lastRequestedTimes[msg.sender] = block.timestamp;
 
         emit TokenRequested(msg.sender, _amount);
 
