@@ -15,7 +15,7 @@ contract FaucetTest is TestUtils {
 
     function setUp() public {
         token = new FirstToken();
-        faucet = new Faucet(address(token));
+        faucet = new Faucet(address(token), 0);
     }
 
     function test_requesTokensByFewAccountStory() public {
